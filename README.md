@@ -39,7 +39,8 @@ To get started, follow the setup guide to install:
 ✅ Required R packages: `sf`, `terra`, `stars`, `tidycensus`, `osmdata`, `mapgl`, `rmapshaper`  
 ✅ Quarto for reproducible workflows  
 
-📘 [Setup Guide →](https://connorflynn.quarto.pub/getting-started-with-r-rstudio-and-github-for-ds421/)
+📘 [Setup Guide →]( 
+https://connorflynn.quarto.pub/getting-started-with-r-rstudio-and-github-for-ds422/)
 
 ---
 
