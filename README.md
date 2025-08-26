@@ -1,7 +1,7 @@
 # 🖥️ DS 422 – Geocomputation  
 **Instructor:** Connor Flynn  
 **Credits:** 3  
-**Schedule:** Tuesdays & Thursdays, 11:30 AM – 12:50 PM (HST)  
+**Schedule:** Tuesdays & Thursdays, 2:30 PM – 3:50 PM (HST)  
 **Location:** Online  
 **Dates:** August 25 – December 11 (Fall Semester)  
 
