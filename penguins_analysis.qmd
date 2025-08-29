@@ -104,6 +104,11 @@ What other packages/functions do a similar thing?
 
 -   Type you answer(s) in bullet points below
 
+```{r}
+library(pastecs)
+stat_desc <- stat.desc(penguins_data_from_csv)
+```
+
 #### Data Visualization
 
 Wohoo!! ggplot is the most common package used for data visualization in R!
@@ -206,7 +211,8 @@ ggplot(data = penguins_data_from_csv, aes(x = flipper_length_mm, y = body_mass_g
     -   In the code chunk below create a histogram with culmen_depth_mm on the x axis and color by species using the dataframe *penguins_data_from_csv*. Give the plot the theme: theme_bw(). Assign a color palette with *scale_fill_viridis_d()*. Give the plot a title, subtitile and custom x and y axis titles.
 
 ```{r}
-
+ggplot(penguins_data_from_csv, aes(x = culmen_depth_mm, fill = species)) +
+  geom_histogram()
 ```
 
 -   Part 2
@@ -214,10 +220,20 @@ ggplot(data = penguins_data_from_csv, aes(x = flipper_length_mm, y = body_mass_g
     -   In the code chunk below create a scatterplot with culmen_depth_mm on the x axis, body_mass_g on the y axis, and color by species using the dataframe *penguins_data_from_csv*. Give the plot the theme: theme_bw(). Assign a color palette with *scale_fill_viridis_d(option = "inferno")*. Give the plot a title, subtitile and custom x and y axis titles.
 
 ```{r}
-
+ggplot(penguins_data_from_csv, aes(x = culmen_depth_mm, y = body_mass_g, color = species)) +
+  geom_point(size = 3, alpha = 0.9) +
+  theme_bw() +
+  scale_color_viridis_d(option = "inferno", begin = 0, end = 1) +
+  labs(
+    title = "Penguin Culmen Depth vs. Body Mass",
+    subtitle = "Bright Inferno Color Palette",
+    x = "Culmen Depth (mm)",
+    y = "Body Mass (g)",
+    color = "Species"
+  )
 ```
 
-#### Interactive Data Visualization
+#### Interactive Data Visualizations
 
 ```{r}
 scatter_plot <- ggplot(data = penguins_data_from_csv, aes(x = flipper_length_mm, y = body_mass_g, color = species, shape = island)) +
