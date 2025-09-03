@@ -82,7 +82,7 @@ sum(intersections$pop_in_zone)
 
 
 
-## Challenge 1 - Using the Tsunami_Evacuation_All_Zones.geojson can you tell me how many people are in Tsunami Evacuation Zones vs Extreme Tsunami Evacuation Zones
+## Challenge 1 - Using the Tsunami_Evacuation_All_Zones.geojson (https://geoportal.hawaii.gov/datasets/437b77f132ed416294b45bde6aef23f4_11/explore?location=20.546870%2C-157.491600%2C7.83) can you tell me how many people are in Tsunami Evacuation Zones vs Extreme Tsunami Evacuation Zones
 
 
 
