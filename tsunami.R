@@ -7,12 +7,13 @@ library(mapgl)
 library(tidycensus)
 #library(rsocrata)
 
-evac_zones <- st_read(here("data/Tsunami_Evacuation_All_Zones.geojson"))
+evac_zones <- st_read(here("data/Tsunami_Evacuation_Zones.geojson"))
 
 
 
 # 2) Simple style (semi-transparent fill + outline)
-fill_col <- "#ef4444"   # red
+fill_col <- "#ef4444"# red
+line_col <- "#7f1d1d"
 
 mapboxgl(bounds = evac_zones) |>
   add_fill_layer(
@@ -22,7 +23,13 @@ mapboxgl(bounds = evac_zones) |>
     fill_opacity = 0.55,
     tooltip = "mapname"
   ) |>
-  add_legend(
+  add_line_layer(
+    id = "tsunami_evac",
+    source = evac_zones,
+    line_color = line_col,
+    line_width = 1
+  ) |>
+   add_legend(
     legend_title = "Tsunami Evacuation Zones",
     values = "Evacuation Area",
     colors = fill_col,
@@ -62,7 +69,7 @@ evac_zones <- evac_zones |>
   select(evac_id, island, zone_type, zone_desc)
 
 
-intersections <- st_intersection(block_groups, evacuation_zones)
+intersections <- st_intersection(block_groups, evac_zones)
 
 
 intersections <- intersections |>
@@ -84,7 +91,35 @@ sum(intersections$pop_in_zone)
 
 ## Challenge 1 - Using the Tsunami_Evacuation_All_Zones.geojson (https://geoportal.hawaii.gov/datasets/437b77f132ed416294b45bde6aef23f4_11/explore?location=20.546870%2C-157.491600%2C7.83) can you tell me how many people are in Tsunami Evacuation Zones vs Extreme Tsunami Evacuation Zones
 
+evac_all_zones <- st_read(here("data/Tsunami_Evacuation_All_Zones.geojson"))
 
+evac_all_zones <- evac_all_zones |>
+  st_transform(4326) |>
+  st_make_valid() |>
+  #st_union() |>
+  mutate(evac_id = dplyr::row_number())
+
+extreme_zones <- evac_all_zones[(evac_all_zones$zone_type %in% "Extreme Tsunami Evacuation Zone"),]
+
+extreme_zones <- extreme_zones |>
+  select(evac_id, island, zone_type, zone_desc)
+
+
+extreme_intersections <- st_intersection(block_groups, extreme_zones)
+
+extreme_intersections <- extreme_intersections |>
+  mutate(overlap_area = st_area(geometry))
+
+
+extreme_intersections <- extreme_intersections |>
+  mutate(weight = as.numeric(overlap_area / blockgroup_area))
+
+
+extreme_intersections <- extreme_intersections |>
+  mutate(pop_in_zone = pop * weight)
+
+
+sum(extreme_intersections$pop_in_zone)
 
 ## Challenge 2 - What is the key assumption our analysis makes? Is this acceptable? How can it be improved?
 
