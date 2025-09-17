@@ -15,6 +15,12 @@ execute:
 editor: visual
 ---
 
+```{r}
+library(here)
+library(terra)
+library(sf)
+```
+
 ## NDVI (Normalized Difference Vegetation Index)
 
 NDVI is a simple, per-pixel indicator of “greenness” (photosynthetic activity).
