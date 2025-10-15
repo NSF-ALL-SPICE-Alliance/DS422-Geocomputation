@@ -1,0 +1,734 @@
+---
+title: "Hawaii SNAP Analysis: Interactive Homework"
+subtitle: "Using Census Data & Machine Learning to Understand Food Security"
+author: "DS 400: Bayesian Statistics & Data Science"
+date: today
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-fold: show
+    code-tools: true
+    df-print: paged
+    fig-width: 11
+    fig-height: 7
+    embed-resources: true
+    smooth-scroll: true
+execute:
+  warning: false
+  message: false
+  cache: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+knitr::opts_chunk$set(
+  fig.align = "center",
+  out.width = "100%"
+)
+```
+
+## 🌺 Introduction: Food Security in Hawaiʻi
+
+Food security is a critical health and equity issue. The Supplemental Nutrition Assistance Program (SNAP) helps vulnerable households afford nutritious food. But which communities have the highest rates of food assistance participation? And what factors are most strongly associated with SNAP participation?
+
+In this assignment, you'll:
+
+1.  **Access Census data** using `tidycensus`
+2.  **Explore patterns** of SNAP participation across Hawaiʻi census tracts
+3.  **Build a predictive model** using Random Forests
+4.  **Interpret results** using SHAP (Explainable AI) techniques
+
+::: {.callout-important icon="📋"}
+## Homework Requirements
+
+-   ✅ Complete all **CHALLENGE** sections
+-   ✅ Provide code AND written explanations
+-   ✅ Show your thinking - comment your code!
+-   ✅ Answer reflection questions at the end
+-   ⭐ Bonus: Try the extension questions for extra credit
+
+**Due Date**: \[Before Class, 2:30 PM pm 10/23/25\]
+:::
+
+------------------------------------------------------------------------
+
+## 📦 Load Libraries
+
+```{r}
+#| label: load-packages
+#| code-fold: false
+
+library(ggplot2)
+library(tidycensus)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(mapgl)
+library(viridis)
+library(randomForest)
+library(treeshap)
+library(mapview)
+library(sf)
+```
+
+------------------------------------------------------------------------
+
+## 📊 Part 1: Collect Census Data
+
+### Set Up Your Census Variables
+
+The code below defines the Census Bureau variables we'll use. These come from the American Community Survey (ACS) 5-Year Estimates.
+
+```{r}
+#| label: define-variables
+#| code-fold: false
+
+# Define ACS variables for Hawaii
+# (Population, poverty, insurance, employment, housing, broadband, education, income, SNAP)
+
+hi_vars <- c(
+  # Person-level
+  poverty_n            = "B17001_002",
+  uninsured_u65_n      = "B27010_017",
+  unemployed_n         = "B23025_005",
+  pop_total            = "B01003_001",
+  
+  # Households + housing
+  households_total     = "B11001_001",
+  broadband_hh_n       = "B28002_004",
+  renter_hh_n          = "B25003_003",
+  novehicle_hh_n       = "B25044_003",
+  snap_hh_n            = "B22001_002",     # <-- SNAP households
+  
+  # Education
+  edu_25plus_total     = "B15003_001",
+  bachelors_n          = "B15003_022",
+  
+  # Labor force + workers
+  labor_force_total    = "B23025_003",
+  workers_total        = "B08301_001",
+  
+  # Income level
+  median_income        = "B19013_001"
+)
+```
+
+::: {.callout-note icon="ℹ️"}
+## Understanding Census Variables
+
+Each variable code (like "B17001_002") refers to a specific data table and line number from the Census Bureau. The naming convention is: - **B** = Detailed table - **17001** = Table ID (in this case, poverty data) - **002** = Specific line number (usually the numerator for a percentage calculation)
+
+For more info, check the [Census Bureau Data API documentation](https://api.census.gov/data/2023/acs/acs5/variables.html)
+:::
+
+### Pull Data from the Census API
+
+```{r}
+#| label: get-census-data
+#| code-fold: false
+#| output: false
+
+# Pull core variables (long format, then pivot to wide)
+hi_acs_long <- get_acs(
+  geography = "tract",
+  state = "HI",
+  year = 2023,
+  geometry = TRUE,
+  variables = hi_vars
+)|>
+  dplyr::filter(GEOID != "15003981200")
+
+# Convert to wide format (one row per census tract)
+hi_acs <- hi_acs_long %>%
+  select(GEOID, variable, estimate) %>%
+  pivot_wider(names_from = variable, values_from = estimate)
+```
+
+::: {.callout-note icon="✅"}
+Census data loaded successfully! (Output suppressed to keep document clean)
+:::
+
+### Calculate Commute Times (≥30 minutes)
+
+```{r}
+#| label: commute-data
+#| code-fold: false
+
+# Get commute time data using table lookup
+commute_tbl <- get_acs(
+  geography = "tract",
+  state = "HI",
+  year = 2023,
+  table = "B08303",
+  geometry = FALSE
+)|>
+  dplyr::filter(GEOID != "15003981200")
+
+# Extract commute ≥30 min variable
+commute_30plus <- commute_tbl %>%
+  filter(variable == "B08303_004") %>%
+  group_by(GEOID) %>%
+  summarize(commute_30plus_n = sum(estimate, na.rm = TRUE), .groups = "drop")
+```
+
+------------------------------------------------------------------------
+
+## 🧮 Part 2: Calculate Percentages & Clean Data
+
+The code below joins all the data and calculates percentages. Study how we normalize each variable!
+
+```{r}
+#| label: calculate-percentages
+#| code-fold: false
+
+# Join commute data and calculate all percentages
+hi_acs <- hi_acs %>%
+  left_join(commute_30plus, by = "GEOID") %>%
+  mutate(
+    # Person-based percentages
+    poverty_rate_pct        = 100 * poverty_n       / pmax(pop_total, 1),
+    uninsured_u65_pct       = 100 * uninsured_u65_n / pmax(pop_total, 1),
+    
+    # Labor-force based
+    unemployment_rate_pct   = 100 * unemployed_n    / pmax(labor_force_total, 1),
+    
+    # Household-based percentages
+    broadband_pct           = 100 * broadband_hh_n  / pmax(households_total, 1),
+    renter_pct              = 100 * renter_hh_n     / pmax(households_total, 1),
+    no_vehicle_pct          = 100 * novehicle_hh_n  / pmax(households_total, 1),
+    snap_pct                = 100 * snap_hh_n       / pmax(households_total, 1),
+    
+    # Education (25+)
+    bachelors_or_higher_pct = 100 * bachelors_n     / pmax(edu_25plus_total, 1),
+    
+    # Commute-based
+    commute_30plus_pct      = 100 * commute_30plus_n / pmax(workers_total, 1)
+  )
+```
+
+::: {.callout-tip icon="💡"}
+## Why `pmax(denominator, 1)`?
+
+This prevents division by zero errors. If a census tract has 0 people, we use 1 as the denominator instead. The `pmax()` function takes the parallel maximum - comparing each value to 1 element-wise.
+:::
+
+------------------------------------------------------------------------
+
+## 🗺️ CHALLENGE 1: Map SNAP Participation
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Create a map showing SNAP participation rates by census tract across Hawaiʻi. You should:
+
+1.  **Use `ggplot2`** with `geom_sf()` to map the data
+2.  **Color by `snap_pct`** (use a viridis color scale)
+3.  **Add labels** including title, subtitle, and data source
+4.  **Make it look professional** with clean theme/formatting
+
+:::
+
+```{r}
+#| label: challenge-1-snap-map
+#| code-fold: false
+
+# YOUR CODE HERE
+# Create a ggplot map of snap_pct by census tract in Hawaii
+# Remember to include title, subtitle
+
+```
+
+::: {.callout-note collapse="true"}
+## 💭 Reflection on Your Map
+
+After creating your map, answer these questions in a comment:
+
+1.  Where are the highest concentrations of SNAP participation?
+2.  Are there geographic patterns (islands, urban vs. rural)?
+3.  What does this tell you about food security in Hawaiʻi?
+:::
+
+------------------------------------------------------------------------
+
+## 🔍 CHALLENGE 2: Interactive Map with mapview
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Create an **interactive leaflet-style map** using the `mapview` package.
+
+**Hints & Resources:** - The `mapview()` function creates interactive maps - Use `zcol = "snap_pct"` to color by SNAP participation - Set `legend = TRUE` to show a legend - Use `layer.name` to label your layer - The `at` parameter controls color breaks (try: `seq(0, max(...), by = 5)`) - Use `col.regions = viridis::viridis(10, direction = -1)` for colors
+:::
+
+```{r}
+#| label: challenge-2-interactive-map
+#| code-fold: false
+
+# YOUR CODE HERE
+# Create an interactive mapview of snap_pct
+
+```
+
+::: {.callout-tip icon="🗺️"}
+## Interactive Map Features
+
+With `mapview`, you can: - Zoom and pan - Click on tracts to see exact values - Toggle layers on/off - Switch between map types - Export the map
+
+Try zooming into a specific island and exploring the variation!
+:::
+
+------------------------------------------------------------------------
+
+## 📊 CHALLENGE 3: Histogram of SNAP Participation
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Create a histogram showing the distribution of `snap_pct` across all Hawaii census tracts.
+
+**Hints & Resources:** - Use `ggplot()` with `geom_histogram()` - Consider bin width - try `bins = 20` or `binwidth = 2` - Add meaningful labels - What does the shape tell you? Is it normally distributed?
+:::
+
+```{r}
+#| label: challenge-3-histogram
+#| code-fold: false
+
+# YOUR CODE HERE
+# Create a histogram of snap_pct
+
+
+
+```
+
+::: {.callout-note collapse="true"}
+## 📈 Interpretation Questions
+
+1.  Is the distribution symmetric or skewed?
+2.  What's the typical SNAP participation rate?
+3.  Are there any outliers or surprising patterns?
+:::
+
+------------------------------------------------------------------------
+
+## 🌲 Part 3: Machine Learning Setup
+
+Now we'll prepare for predictive modeling. First, create the ML-ready dataset:
+
+```{r}
+#| label: prepare-ml-data
+#| code-fold: false
+
+# Create ML-ready dataframe with all our features
+hi_acs_data_ml <- hi_acs %>%
+  st_drop_geometry() %>%                          # Remove geographic data
+  select(median_income, poverty_rate_pct, uninsured_u65_pct, 
+         unemployment_rate_pct, broadband_pct, renter_pct, no_vehicle_pct, 
+         snap_pct, bachelors_or_higher_pct, commute_30plus_pct) %>%
+  drop_na()                                       # Remove missing values
+
+# Check dimensions
+cat("Dataset dimensions:", dim(hi_acs_data_ml), "\n")
+cat("Features for modeling:", names(hi_acs_data_ml))
+```
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 4: Build a Random Forest Model
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Train a Random Forest to predict SNAP participation rates using the other socioeconomic indicators.
+
+**Your Model Should:** - Use `snap_pct` as the target variable (left side of `~`) - Use all other variables as predictors (`.` on right side) - Have `ntree = 500` for stability - Be named `rf`
+
+**Hints & Resources:** - Use the `randomForest()` function - Formula syntax: `target ~ .` predicts target using all other columns - Structure: `randomForest(formula, data = ..., ntree = 500)` - Print the model to see performance metrics!
+:::
+
+```{r}
+#| label: challenge-4-random-forest
+#| code-fold: false
+
+# YOUR CODE HERE
+# Build a random forest model to predict snap_pct
+# Assign it to an object named 'rf'
+
+```
+
+::: {.callout-note collapse="true"}
+## 🔍 Understanding Your Model Output
+
+Look at the printed output and answer:
+
+1.  **Mean of squared residuals (MSR)**: How accurate are the predictions on average?
+2.  **% Var explained**: What percentage of SNAP variation does the model explain?
+3.  **Interpretation**: Is this good? What might the model be missing?
+
+Remember: MSR tells you the average squared prediction error. % Var explained is like R² - higher is better!
+:::
+
+------------------------------------------------------------------------
+
+## 🔬 Part 4: Explainable AI with SHAP
+
+SHAP (SHapley Additive exPlanations) values explain *why* the model makes specific predictions. They break down each prediction into individual contributions from each feature.
+
+### Understanding SHAP
+
+Before we calculate, let's understand what we're doing:
+
+1.  **Unify the model**: Convert the Random Forest into a format that SHAP can work with
+2.  **Calculate SHAP values**: Compute explanations for a subset of observations (computing for all can be slow)
+3.  **Interpret**: Use the results to explain individual predictions and global patterns
+
+------------------------------------------------------------------------
+
+## 🎯 CHALLENGE 8: Prepare SHAP Calculations
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Prepare the model for SHAP analysis by:
+
+1.  **Unifying** your Random Forest model using `unify()`
+2.  **Calculating SHAP values** for the first 200 observations using `treeshap()`
+
+**Hints & Resources:**
+
+-   Step 1: Use `unify(your_model, your_data)` to convert the RF
+    -   First argument: your Random Forest object (named `rf`)
+    -   Second argument: your ML dataset (named `hi_acs_data_ml`)
+    -   Assign result to `unified`
+-   Step 2: Use `treeshap(unified_object, data_subset, verbose = 0)`
+    -   First argument: your unified model
+    -   Second argument: subset of data - use `hi_acs_data_ml[1:200, ]` to get first 200 rows
+    -   Third argument: `verbose = 0` suppresses progress messages
+    -   Assign result to `treeshap1`
+:::
+
+```{r}
+#| label: challenge-8-prepare-shap
+#| code-fold: false
+
+# YOUR CODE HERE
+# Step 1: Unify your Random Forest model
+# unified <- unify(???, ???)
+
+# Step 2: Calculate SHAP values for first 200 observations
+# treeshap1 <- treeshap(???, ???, verbose = 0)
+
+```
+
+::: {.callout-note collapse="true"}
+## 💭 Why Only 200 Observations?
+
+Computing SHAP values is computationally expensive - it can take a long time for large datasets. For this assignment, we're calculating for a representative sample of 200 census tracts, which is enough to: - Understand which features matter globally - Examine feature dependence patterns - Look at individual case examples
+
+In production, you might calculate for all observations or use approximation methods like TreeSHAP (which is what we're using!).
+:::
+
+::: {.callout-tip icon="⏱️"}
+## ⚠️ Patience Required!
+
+The SHAP calculation might take 30 seconds to a few minutes depending on your computer. The `verbose = 0` parameter keeps it quiet while it works. You'll know it's done when the next code chunk starts executing!
+:::
+
+------------------------------------------------------------------------
+
+## 📊 CHALLENGE 5: Feature Importance Plot
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Create a feature importance plot showing the top 5 most important variables for predicting SNAP participation.
+
+**Hints & Resources:** - Use `plot_feature_importance(treeshap1, max_vars = 5)` - This uses the SHAP values we just calculated - The plot shows which features have the biggest impact on predictions - Longer bars = more important
+:::
+
+```{r}
+#| label: challenge-5-feature-importance
+#| code-fold: false
+
+# YOUR CODE HERE
+# Plot feature importance (top 5 most important features)
+
+```
+
+::: {.callout-note collapse="true"}
+## 💭 Interpretation
+
+Based on your feature importance plot:
+
+1.  What are the TOP 2 most important predictors of SNAP participation?
+2.  Why do you think these variables matter?
+3.  Are there any surprising results?
+4.  What does this tell you about food security in Hawaiʻi?
+:::
+
+------------------------------------------------------------------------
+
+## 📈 CHALLENGE 6: Feature Dependence Plots
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Create feature dependence plots for the **top 5 most important features** you identified in Challenge 5.
+
+**What to Do:** 1. Look at your feature importance plot 2. Identify the 5 most important variables 3. Create a dependence plot for each one 4. Use: `plot_feature_dependence(treeshap1, "variable_name")`
+
+**Hints & Resources:** - The x-axis shows the actual variable values - The y-axis shows SHAP values (how much it pushes predictions up/down) - Red dots = push toward higher SNAP % - Blue dots = push toward lower SNAP % - Look for patterns: linear? non-linear? threshold effects?
+
+**Your Code (plot all 5):**
+:::
+
+```{r}
+#| label: challenge-6-dependence-1
+#| code-fold: false
+
+# YOUR CODE HERE - Feature Dependence Plot #1
+
+```
+
+```{r}
+#| label: challenge-6-dependence-2
+#| code-fold: false
+
+# YOUR CODE HERE - Feature Dependence Plot #2
+
+```
+
+```{r}
+#| label: challenge-6-dependence-3
+#| code-fold: false
+
+# YOUR CODE HERE - Feature Dependence Plot #3
+
+```
+
+```{r}
+#| label: challenge-6-dependence-4
+#| code-fold: false
+
+# YOUR CODE HERE - Feature Dependence Plot #4
+
+```
+
+```{r}
+#| label: challenge-6-dependence-5
+#| code-fold: false
+
+# YOUR CODE HERE - Feature Dependence Plot #5
+
+```
+
+::: {.callout-note collapse="true"}
+## 📊 Dependence Analysis Questions
+
+For each plot, write 1-2 sentences about:
+
+1.  **Direction**: Does higher variable value → higher or lower SNAP participation?
+2.  **Strength**: Is the relationship strong, moderate, or weak?
+3.  **Pattern**: Is it linear, or are there non-linear patterns?
+4.  **Outliers**: Are there interesting outlier tracts?
+
+Example answer: \> "Poverty rate shows a strong positive relationship with SNAP participation. As poverty increases, SHAP values increase substantially, pushing predictions toward higher SNAP participation. The relationship appears roughly linear."
+:::
+
+------------------------------------------------------------------------
+
+## 👁️ CHALLENGE 7: Individual Tract Contribution
+
+::: {.callout-warning icon="🎯"}
+## Your Task
+
+Examine what drives predictions for **Census Tract 304.04 on Maui, Hawaiʻi**.
+
+**Hints & Resources:** - This tract is observation #154 in our data (hint: `obs = 154`) - Use: `plot_contribution()` - **Red bars** = pushing toward higher SNAP % - **Blue bars** = pushing toward lower SNAP % - **Bar length** = strength of effect
+
+**Your Code:**
+:::
+
+```{r}
+#| label: challenge-7-contribution
+#| code-fold: false
+
+# YOUR CODE HERE
+# Plot contribution effects for Census Tract 304.04, Maui
+
+```
+
+::: {.callout-note collapse="true"}
+## 🔍 Case Study Analysis
+
+Answer these questions about Maui Census Tract 304.04:
+
+1.  **Baseline**: What's the model's baseline prediction?
+2.  **Pushers**: Which 2-3 variables push predictions toward HIGHER SNAP%?
+3.  **Pullers**: Which 2-3 variables push predictions toward LOWER SNAP%?
+4.  **Net Effect**: Is the final prediction above or below the baseline?
+5.  **Story**: Write 2-3 sentences telling the "story" of this tract's SNAP participation
+:::
+
+------------------------------------------------------------------------
+
+## 🎓 Reflection & Analysis
+
+::: {.callout-important icon="🤔"}
+## Final Reflection Questions
+
+Answer these questions in text below:
+
+### Understanding the Analysis
+
+1.  **Model Performance**: How well does your Random Forest predict SNAP participation? What might explain the remaining unexplained variation?
+
+2.  **Key Drivers**: Based on feature importance and dependence plots, which 2-3 factors are most strongly associated with SNAP participation in Hawaiʻi?
+
+3.  **Equity Implications**:
+
+    -   What does the geographic distribution of SNAP participation tell you about food security disparities?
+    -   Are certain communities more vulnerable?
+
+4.  **Limitations**:
+
+    -   What important variables might be missing from this analysis?
+    -   What are the limitations of predicting SNAP participation? (Remember: correlation ≠ causation)
+
+5.  **Policy Recommendations**:
+
+    -   Based on your findings, what 2-3 policy interventions might help address food insecurity?
+    -   Who should be targeted? Where should resources be focused?
+
+### Technical Reflection
+
+6.  **Machine Learning Interpretation**: How did SHAP values help you understand the Random Forest model compared to just looking at variable importance?
+
+7.  **Next Steps**: If you were to continue this analysis, what would you do next?
+:::
+
+------------------------------------------------------------------------
+
+## ⭐ BONUS: Extension Challenges
+
+::: {.callout-tip icon="🚀"}
+## For Extra Credit
+
+Try one or more of these extensions:
+
+### Extension 1: Regional Analysis
+
+-   Split Hawaiʻi by island (using `GEOID` or geographic location)
+-   Build separate Random Forest models for each island
+-   Compare which factors matter most on each island
+
+### Extension 2: Relationship Exploration
+
+-   Create scatter plots showing relationships between top predictors and SNAP%
+-   Calculate correlation coefficients
+-   Which relationships are strongest?
+
+### Extension 3: Model Comparison
+
+-   Build a **second** Random Forest with different parameters (e.g., `mtry`, `nodesize`)
+-   Compare performance to your original model
+-   Which performs better?
+
+### Extension 4: Prediction Intervals
+
+-   For a new hypothetical census tract, use your model to predict SNAP participation
+-   What would be needed to create prediction intervals?
+-   How confident would you be in that prediction?
+
+### Extension 5: Data Visualization
+
+-   Create a multi-panel visualization combining:
+    -   The map of SNAP participation
+    -   Distribution histogram
+    -   Top feature importance plot
+    -   Tell a complete visual story
+:::
+
+------------------------------------------------------------------------
+
+## 📝 Submission Checklist
+
+-   [ ] All 8 challenges completed with code
+-   [ ] Written explanations for each challenge
+-   [ ] Reflection questions answered thoroughly
+-   [ ] Code is commented and readable
+-   [ ] Plots are properly labeled with titles/legends
+-   [ ] At least one bonus challenge attempted (optional)
+-   [ ] **Rendered to PDF and submitted to Canvas**
+
+------------------------------------------------------------------------
+
+## 📤 How to Render & Submit
+
+### Step 1: Render to HTML
+
+In RStudio, click the blue **"Render"** button at the top of the editor pane.
+
+Wait for the rendering to complete - you'll see the document appear in the **Viewer pane** (bottom right).
+
+::: {.callout-tip icon="⏱️"}
+**Rendering typically takes 2-5 minutes depending on how fast your computer is. Be patient!**
+:::
+
+### Step 2: Open in New Window
+
+In the **Viewer pane**, click the **"Show in new window"** icon (it looks like an arrow pointing to a box, usually in the top-right corner of the viewer).
+
+Your rendered HTML document will open in your default web browser.
+
+### Step 3: Print to PDF
+
+1.  In your browser, press **`Ctrl + P`** (Windows) or **`Cmd + P`** (Mac)
+2.  A print dialog will appear
+3.  Change the destination to **"Save as PDF"**
+4.  Give it a clear name: `LastName_FirstName_ml_assignment.pdf`
+5.  Click **"Save"**
+
+Your PDF will download to your Downloads folder (or wherever your browser saves files).
+
+### Step 4: Upload to Canvas
+
+1.  Go to your Canvas course page
+2.  Find the assignment: "Hawaii SNAP Analysis Homework"
+3.  Click **"Submit Assignment"**
+4.  Click **"Choose File"** and select your PDF
+5.  Click **"Submit"**
+
+::: {.callout-important icon="⚠️"}
+## Important Reminders
+
+-   ✅ Make sure your `.qmd` file renders **without errors** before saving as PDF
+-   ✅ Double-check that all your challenge code is visible in the HTML output
+-   ✅ Your PDF should include both your code AND the results/plots
+-   ✅ Save the PDF file somewhere you can find it (Desktop or a course folder)
+-   ⏱️ Allow 5-10 minutes total for rendering and saving
+:::
+
+### Troubleshooting
+
+**"Render button is grayed out?"** - Make sure you have the `.qmd` file open in the editor (not just viewed)
+
+**"I don't see a Viewer pane?"** - Go to `View` → `Panes` → `Show Viewer Pane`
+
+**"Nothing appears after clicking Render?"** - Check the R console for error messages - Make sure all your code runs without errors first - Try re-rendering after fixing any issues
+
+------------------------------------------------------------------------
+
+## 📚 Resources & References
+
+-   [tidycensus Documentation](https://walker-data.com/tidycensus/)
+-   [Census Bureau Data Catalog](https://data.census.gov/)
+-   [SHAP Documentation](https://shap.readthedocs.io/)
+-   [Random Forests in R](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf)
+-   [mapview Package](https://r-spatial.github.io/mapview/)
+
+------------------------------------------------------------------------
+
+*Good luck! Remember: focus on understanding WHAT you're doing and WHY, not just running code. Ask questions, explore the data, and enjoy the detective work of data science! 🔍📊*
