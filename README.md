@@ -1,23 +1,14 @@
-# 🖥️ DS 422 – Geocomputation  
+# Welcome to DS 422 – Geocomputation  
 **Instructor:** Connor Flynn  
 **Credits:** 3  
-**Schedule:** Tuesdays & Thursdays, 2:30 PM – 3:50 PM (HST)  
-**Location:** Online  
-**Dates:** August 25 – December 11 (Fall Semester)  
-** Test
+**Schedule:** Tuesdays & Thursdays, 11:30 AM – 12:50 PM (HST)  
+**Location:** DSC  
+
 
 ---
 
 ## 🌍 Course Overview  
 **DS 422: Geocomputation** is the third course in the GIS Certificate Program, following Cartographic Design and leading into advanced spatial methods and capstone work.  
-
-This course focuses on the **computational handling of geographic data**, emphasizing reproducible workflows, vector and raster computation, and integration of APIs and open datasets. Students will gain hands-on experience with tools including **R, sf, terra, stars, osmdata, tidycensus, and mapgl** while working through case studies such as:  
-
-- 🌊 Tsunami evacuation zones and population exposure  
-- 🚗 Traffic analysis during Hawaiʻi tsunami evacuation  
-- 📊 Oʻahu socioeconomic indicators (ACS computation)  
-- 🏪 Business location analytics on Oʻahu  
-- 🛡️ Defense & DoD-related geocomputation  
 
 ---
 
@@ -26,7 +17,7 @@ This course is part of the five-course GIS certificate:
 
 - **DS 420: Foundations**  
 - **DS 421: Cartographic Design**  
-- **DS 422: Geocomputation** (you are here)  
+- **DS 422: Geocomputation**  
 - **DS 434: Spatial Analysis**  
 - **DS 492: Capstone**  
 
@@ -45,10 +36,12 @@ https://connorflynn.quarto.pub/getting-started-with-r-rstudio-and-github-for-ds4
 
 ---
 
-## 🗃️ Repo Contents  
-This repository will house:  
+#### Points Breakdown
 
-- **Weekly notebooks and labs** to follow along in class  
-- **Case study datasets** (or links to open data sources)  
-- **Assignments** with reproducible workflows in R/Quarto  
-- **Final project instructions and rubric**  
+| Assignment              | Points |
+|-------------------------|--------|
+| 3 Assignments            | 30     |
+| 1 Presentation           | 15     |
+| Class Code & Completed Challenges pushed to Github   | 25 |
+| Attendance               | 10     |
+| Final Project            | 20     | 
