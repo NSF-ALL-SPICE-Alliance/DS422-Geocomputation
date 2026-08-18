@@ -1,0 +1,1261 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\@ifpackageloaded{fontawesome5}{}{\usepackage{fontawesome5}}
+\definecolor{quarto-callout-color}{HTML}{909090}
+\definecolor{quarto-callout-note-color}{HTML}{0758E5}
+\definecolor{quarto-callout-important-color}{HTML}{CC1914}
+\definecolor{quarto-callout-warning-color}{HTML}{EB9113}
+\definecolor{quarto-callout-tip-color}{HTML}{00A047}
+\definecolor{quarto-callout-caution-color}{HTML}{FC5300}
+\definecolor{quarto-callout-color-frame}{HTML}{acacac}
+\definecolor{quarto-callout-note-color-frame}{HTML}{4582ec}
+\definecolor{quarto-callout-important-color-frame}{HTML}{d9534f}
+\definecolor{quarto-callout-warning-color-frame}{HTML}{f0ad4e}
+\definecolor{quarto-callout-tip-color-frame}{HTML}{02b875}
+\definecolor{quarto-callout-caution-color-frame}{HTML}{fd7e14}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+
+\usepackage{bookmark}
+
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Hawaii SNAP Analysis: Interactive Homework},
+  pdfauthor={DS 400: Bayesian Statistics \& Data Science},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{Hawaii SNAP Analysis: Interactive Homework}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Using Census Data \& Machine Learning to Understand Food
+Security}
+\author{DS 400: Bayesian Statistics \& Data Science}
+\date{2025-10-15}
+
+\begin{document}
+\maketitle
+
+
+\subsection{🌺 Introduction: Food Security in
+Hawaiʻi}\label{introduction-food-security-in-hawaiux2bbi}
+
+Food security is a critical health and equity issue. The Supplemental
+Nutrition Assistance Program (SNAP) helps vulnerable households afford
+nutritious food. But which communities have the highest rates of food
+assistance participation? And what factors are most strongly associated
+with SNAP participation?
+
+In this assignment, you'll:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Access Census data} using \texttt{tidycensus}
+\item
+  \textbf{Explore patterns} of SNAP participation across Hawaiʻi census
+  tracts
+\item
+  \textbf{Build a predictive model} using Random Forests
+\item
+  \textbf{Interpret results} using SHAP (Explainable AI) techniques
+\end{enumerate}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Homework Requirements}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-important-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+\begin{itemize}
+\tightlist
+\item
+  ✅ Complete all \textbf{CHALLENGE} sections
+\item
+  ✅ Provide code AND written explanations
+\item
+  ✅ Show your thinking - comment your code!
+\item
+  ✅ Answer reflection questions at the end
+\item
+  ⭐ Bonus: Try the extension questions for extra credit
+\end{itemize}
+
+\textbf{Due Date}: {[}Your date here{]}
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{📦 Load Libraries}\label{load-libraries}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidycensus)}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(tidyr)}
+\FunctionTok{library}\NormalTok{(stringr)}
+\FunctionTok{library}\NormalTok{(mapgl)}
+\FunctionTok{library}\NormalTok{(viridis)}
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(randomForest)}
+\FunctionTok{library}\NormalTok{(treeshap)}
+\FunctionTok{library}\NormalTok{(mapview)}
+\FunctionTok{library}\NormalTok{(sf)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{📊 Part 1: Collect Census
+Data}\label{part-1-collect-census-data}
+
+\subsubsection{Set Up Your Census
+Variables}\label{set-up-your-census-variables}
+
+The code below defines the Census Bureau variables we'll use. These come
+from the American Community Survey (ACS) 5-Year Estimates.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Define ACS variables for Hawaii}
+\CommentTok{\# (Population, poverty, insurance, employment, housing, broadband, education, income, SNAP)}
+
+\NormalTok{hi\_vars }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+  \CommentTok{\# Person{-}level}
+  \AttributeTok{poverty\_n            =} \StringTok{"B17001\_002"}\NormalTok{,}
+  \AttributeTok{uninsured\_u65\_n      =} \StringTok{"B27010\_017"}\NormalTok{,}
+  \AttributeTok{unemployed\_n         =} \StringTok{"B23025\_005"}\NormalTok{,}
+  \AttributeTok{pop\_total            =} \StringTok{"B01003\_001"}\NormalTok{,}
+  
+  \CommentTok{\# Households + housing}
+  \AttributeTok{households\_total     =} \StringTok{"B11001\_001"}\NormalTok{,}
+  \AttributeTok{broadband\_hh\_n       =} \StringTok{"B28002\_004"}\NormalTok{,}
+  \AttributeTok{renter\_hh\_n          =} \StringTok{"B25003\_003"}\NormalTok{,}
+  \AttributeTok{novehicle\_hh\_n       =} \StringTok{"B25044\_003"}\NormalTok{,}
+  \AttributeTok{snap\_hh\_n            =} \StringTok{"B22001\_002"}\NormalTok{,     }\CommentTok{\# \textless{}{-}{-} SNAP households}
+  
+  \CommentTok{\# Education}
+  \AttributeTok{edu\_25plus\_total     =} \StringTok{"B15003\_001"}\NormalTok{,}
+  \AttributeTok{bachelors\_n          =} \StringTok{"B15003\_022"}\NormalTok{,}
+  
+  \CommentTok{\# Labor force + workers}
+  \AttributeTok{labor\_force\_total    =} \StringTok{"B23025\_003"}\NormalTok{,}
+  \AttributeTok{workers\_total        =} \StringTok{"B08301\_001"}\NormalTok{,}
+  
+  \CommentTok{\# Income level}
+  \AttributeTok{median\_income        =} \StringTok{"B19013\_001"}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Understanding Census Variables}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Each variable code (like ``B17001\_002'') refers to a specific data
+table and line number from the Census Bureau. The naming convention is:
+- \textbf{B} = Detailed table - \textbf{17001} = Table ID (in this case,
+poverty data) - \textbf{002} = Specific line number (usually the
+numerator for a percentage calculation)
+
+For more info, check the
+\href{https://api.census.gov/data/2023/acs/acs5/variables.html}{Census
+Bureau Data API documentation}
+
+\end{tcolorbox}
+
+\subsubsection{Pull Data from the Census
+API}\label{pull-data-from-the-census-api}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Pull core variables (long format, then pivot to wide)}
+\NormalTok{hi\_acs\_long }\OtherTok{\textless{}{-}} \FunctionTok{get\_acs}\NormalTok{(}
+  \AttributeTok{geography =} \StringTok{"tract"}\NormalTok{,}
+  \AttributeTok{state =} \StringTok{"HI"}\NormalTok{,}
+  \AttributeTok{year =} \DecValTok{2023}\NormalTok{,}
+  \AttributeTok{geometry =} \ConstantTok{TRUE}\NormalTok{,}
+  \AttributeTok{variables =}\NormalTok{ hi\_vars}
+\NormalTok{)}\SpecialCharTok{|\textgreater{}}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{filter}\NormalTok{(GEOID }\SpecialCharTok{!=} \StringTok{"15003981200"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |====                                                                  |   6%
+  |                                                                            
+  |=========                                                             |  13%
+  |                                                                            
+  |==========                                                            |  14%
+  |                                                                            
+  |============                                                          |  17%
+  |                                                                            
+  |=============                                                         |  19%
+  |                                                                            
+  |==============                                                        |  20%
+  |                                                                            
+  |===============                                                       |  22%
+  |                                                                            
+  |================                                                      |  23%
+  |                                                                            
+  |===================                                                   |  27%
+  |                                                                            
+  |====================                                                  |  29%
+  |                                                                            
+  |=====================                                                 |  30%
+  |                                                                            
+  |=======================                                               |  33%
+  |                                                                            
+  |=========================                                             |  35%
+  |                                                                            
+  |==========================                                            |  37%
+  |                                                                            
+  |===========================                                           |  38%
+  |                                                                            
+  |============================                                          |  40%
+  |                                                                            
+  |=============================                                         |  42%
+  |                                                                            
+  |===============================                                       |  45%
+  |                                                                            
+  |=================================                                     |  46%
+  |                                                                            
+  |==================================                                    |  48%
+  |                                                                            
+  |===================================                                   |  50%
+  |                                                                            
+  |====================================                                  |  51%
+  |                                                                            
+  |=====================================                                 |  53%
+  |                                                                            
+  |=======================================                               |  56%
+  |                                                                            
+  |=========================================                             |  58%
+  |                                                                            
+  |==========================================                            |  60%
+  |                                                                            
+  |===========================================                           |  61%
+  |                                                                            
+  |===============================================                       |  68%
+  |                                                                            
+  |====================================================                  |  74%
+  |                                                                            
+  |=======================================================               |  79%
+  |                                                                            
+  |=========================================================             |  81%
+  |                                                                            
+  |==========================================================            |  82%
+  |                                                                            
+  |===============================================================       |  90%
+  |                                                                            
+  |====================================================================  |  97%
+  |                                                                            
+  |======================================================================| 100%
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Convert to wide format (one row per census tract)}
+\NormalTok{hi\_acs }\OtherTok{\textless{}{-}}\NormalTok{ hi\_acs\_long }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(GEOID, variable, estimate) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_wider}\NormalTok{(}\AttributeTok{names\_from =}\NormalTok{ variable, }\AttributeTok{values\_from =}\NormalTok{ estimate)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Calculate Commute Times (≥30
+minutes)}\label{calculate-commute-times-30-minutes}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Get commute time data using table lookup}
+\NormalTok{commute\_tbl }\OtherTok{\textless{}{-}} \FunctionTok{get\_acs}\NormalTok{(}
+  \AttributeTok{geography =} \StringTok{"tract"}\NormalTok{,}
+  \AttributeTok{state =} \StringTok{"HI"}\NormalTok{,}
+  \AttributeTok{year =} \DecValTok{2023}\NormalTok{,}
+  \AttributeTok{table =} \StringTok{"B08303"}\NormalTok{,}
+  \AttributeTok{geometry =} \ConstantTok{FALSE}
+\NormalTok{)}\SpecialCharTok{|\textgreater{}}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{filter}\NormalTok{(GEOID }\SpecialCharTok{!=} \StringTok{"15003981200"}\NormalTok{)}
+
+\CommentTok{\# Extract commute ≥30 min variable}
+\NormalTok{commute\_30plus }\OtherTok{\textless{}{-}}\NormalTok{ commute\_tbl }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(variable }\SpecialCharTok{==} \StringTok{"B08303\_004"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(GEOID) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{commute\_30plus\_n =} \FunctionTok{sum}\NormalTok{(estimate, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }\AttributeTok{.groups =} \StringTok{"drop"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{🧮 Part 2: Calculate Percentages \& Clean
+Data}\label{part-2-calculate-percentages-clean-data}
+
+The code below joins all the data and calculates percentages. Study how
+we normalize each variable!
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Join commute data and calculate all percentages}
+\NormalTok{hi\_acs }\OtherTok{\textless{}{-}}\NormalTok{ hi\_acs }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{left\_join}\NormalTok{(commute\_30plus, }\AttributeTok{by =} \StringTok{"GEOID"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \CommentTok{\# Person{-}based percentages}
+    \AttributeTok{poverty\_rate\_pct        =} \DecValTok{100} \SpecialCharTok{*}\NormalTok{ poverty\_n       }\SpecialCharTok{/} \FunctionTok{pmax}\NormalTok{(pop\_total, }\DecValTok{1}\NormalTok{),}
+    \AttributeTok{uninsured\_u65\_pct       =} \DecValTok{100} \SpecialCharTok{*}\NormalTok{ uninsured\_u65\_n }\SpecialCharTok{/} \FunctionTok{pmax}\NormalTok{(pop\_total, }\DecValTok{1}\NormalTok{),}
+    
+    \CommentTok{\# Labor{-}force based}
+    \AttributeTok{unemployment\_rate\_pct   =} \DecValTok{100} \SpecialCharTok{*}\NormalTok{ unemployed\_n    }\SpecialCharTok{/} \FunctionTok{pmax}\NormalTok{(labor\_force\_total, }\DecValTok{1}\NormalTok{),}
+    
+    \CommentTok{\# Household{-}based percentages}
+    \AttributeTok{broadband\_pct           =} \DecValTok{100} \SpecialCharTok{*}\NormalTok{ broadband\_hh\_n  }\SpecialCharTok{/} \FunctionTok{pmax}\NormalTok{(households\_total, }\DecValTok{1}\NormalTok{),}
+    \AttributeTok{renter\_pct              =} \DecValTok{100} \SpecialCharTok{*}\NormalTok{ renter\_hh\_n     }\SpecialCharTok{/} \FunctionTok{pmax}\NormalTok{(households\_total, }\DecValTok{1}\NormalTok{),}
+    \AttributeTok{no\_vehicle\_pct          =} \DecValTok{100} \SpecialCharTok{*}\NormalTok{ novehicle\_hh\_n  }\SpecialCharTok{/} \FunctionTok{pmax}\NormalTok{(households\_total, }\DecValTok{1}\NormalTok{),}
+    \AttributeTok{snap\_pct                =} \DecValTok{100} \SpecialCharTok{*}\NormalTok{ snap\_hh\_n       }\SpecialCharTok{/} \FunctionTok{pmax}\NormalTok{(households\_total, }\DecValTok{1}\NormalTok{),}
+    
+    \CommentTok{\# Education (25+)}
+    \AttributeTok{bachelors\_or\_higher\_pct =} \DecValTok{100} \SpecialCharTok{*}\NormalTok{ bachelors\_n     }\SpecialCharTok{/} \FunctionTok{pmax}\NormalTok{(edu\_25plus\_total, }\DecValTok{1}\NormalTok{),}
+    
+    \CommentTok{\# Commute{-}based}
+    \AttributeTok{commute\_30plus\_pct      =} \DecValTok{100} \SpecialCharTok{*}\NormalTok{ commute\_30plus\_n }\SpecialCharTok{/} \FunctionTok{pmax}\NormalTok{(workers\_total, }\DecValTok{1}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Why \texttt{pmax(denominator,\ 1)}?}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+This prevents division by zero errors. If a census tract has 0 people,
+we use 1 as the denominator instead. The \texttt{pmax()} function takes
+the parallel maximum - comparing each value to 1 element-wise.
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{🗺️ CHALLENGE 1: Map SNAP
+Participation}\label{challenge-1-map-snap-participation}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Your Task}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-warning-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Create a map showing SNAP participation rates by census tract across
+Hawaiʻi. You should:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Use \texttt{ggplot2}} with \texttt{geom\_sf()} to map the data
+\item
+  \textbf{Color by \texttt{snap\_pct}} (use a viridis color scale)
+\item
+  \textbf{Add labels} including title, subtitle, and data source
+\item
+  \textbf{Make it look professional} with clean theme/formatting
+\end{enumerate}
+
+\textbf{Hints \& Resources:} - Use the \texttt{hi\_acs} dataset (it
+already has geometry from \texttt{get\_acs()}) - Check out
+\texttt{scale\_fill\_viridis()} for the color scale - Consider using
+\texttt{color\ =\ NA} in \texttt{geom\_sf()} to remove tract borders -
+Look at \texttt{theme\_minimal()} for a clean starting point - The code
+structure might look like:
+\texttt{r\ \ \ ggplot(hi\_acs)\ +\ \ \ \ \ geom\_sf(aes(fill\ =\ snap\_pct),\ color\ =\ NA)\ +\ \ \ \ \ scale\_fill\_viridis(option\ =\ "plasma",\ direction\ =\ -1,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ name\ =\ "\%\ with\ SNAP")\ +\ \ \ \ \ labs(title\ =\ "...",\ subtitle\ =\ "...",\ caption\ =\ "...")\ +\ \ \ \ \ theme\_minimal()\ +\ \ \ \ \ theme(...)}
+
+\textbf{Your Code:}
+
+\end{tcolorbox}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE}
+\CommentTok{\# Create a ggplot map of snap\_pct by census tract in Hawaii}
+\CommentTok{\# Remember to include title, subtitle, and source citation!}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{💭 Reflection on Your Map}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+After creating your map, answer these questions in a comment:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Where are the highest concentrations of SNAP participation?
+\item
+  Are there geographic patterns (islands, urban vs.~rural)?
+\item
+  What does this tell you about food security in Hawaiʻi?
+\end{enumerate}
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{🔍 CHALLENGE 2: Interactive Map with
+mapview}\label{challenge-2-interactive-map-with-mapview}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Your Task}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-warning-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Create an \textbf{interactive leaflet-style map} using the
+\texttt{mapview} package.
+
+\textbf{Hints \& Resources:} - The \texttt{mapview()} function creates
+interactive maps - Use \texttt{zcol\ =\ "snap\_pct"} to color by SNAP
+participation - Set \texttt{legend\ =\ TRUE} to show a legend - Use
+\texttt{layer.name} to label your layer - The \texttt{at} parameter
+controls color breaks (try: \texttt{seq(0,\ max(...),\ by\ =\ 5)}) - Use
+\texttt{col.regions\ =\ viridis::viridis(10,\ direction\ =\ -1)} for
+colors
+
+\textbf{Your Code:}
+
+\end{tcolorbox}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE}
+\CommentTok{\# Create an interactive mapview of snap\_pct}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Interactive Map Features}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+With \texttt{mapview}, you can: - Zoom and pan - Click on tracts to see
+exact values - Toggle layers on/off - Switch between map types - Export
+the map
+
+Try zooming into a specific island and exploring the variation!
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{📊 CHALLENGE 3: Histogram of SNAP
+Participation}\label{challenge-3-histogram-of-snap-participation}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Your Task}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-warning-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Create a histogram showing the distribution of \texttt{snap\_pct} across
+all Hawaii census tracts.
+
+\textbf{Hints \& Resources:} - Use \texttt{ggplot()} with
+\texttt{geom\_histogram()} - Consider bin width - try
+\texttt{bins\ =\ 20} or \texttt{binwidth\ =\ 2} - Add meaningful labels
+- What does the shape tell you? Is it normally distributed?
+
+\textbf{Your Code:}
+
+\end{tcolorbox}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE}
+\CommentTok{\# Create a histogram of snap\_pct}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{📈 Interpretation Questions}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Is the distribution symmetric or skewed?
+\item
+  What's the typical SNAP participation rate?
+\item
+  Are there any outliers or surprising patterns?
+\end{enumerate}
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{🌲 Part 3: Machine Learning
+Setup}\label{part-3-machine-learning-setup}
+
+Now we'll prepare for predictive modeling. First, create the ML-ready
+dataset:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Create ML{-}ready dataframe with all our features}
+\NormalTok{hi\_acs\_data\_ml }\OtherTok{\textless{}{-}}\NormalTok{ hi\_acs }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(GEOID, median\_income, poverty\_rate\_pct, uninsured\_u65\_pct, }
+\NormalTok{         unemployment\_rate\_pct, broadband\_pct, renter\_pct, no\_vehicle\_pct, }
+\NormalTok{         snap\_pct, bachelors\_or\_higher\_pct, commute\_30plus\_pct) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{GEOID) }\SpecialCharTok{\%\textgreater{}\%}                              \CommentTok{\# Remove ID for modeling}
+\NormalTok{  tidyr}\SpecialCharTok{::}\FunctionTok{drop\_na}\NormalTok{()                                }\CommentTok{\# Remove missing values}
+
+\CommentTok{\# Check dimensions}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Dataset dimensions:"}\NormalTok{, }\FunctionTok{dim}\NormalTok{(hi\_acs\_data\_ml), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Dataset dimensions: 419 11 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Features for modeling:"}\NormalTok{, }\FunctionTok{names}\NormalTok{(hi\_acs\_data\_ml))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Features for modeling: median_income poverty_rate_pct uninsured_u65_pct unemployment_rate_pct broadband_pct renter_pct no_vehicle_pct snap_pct bachelors_or_higher_pct commute_30plus_pct geometry
+\end{verbatim}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{🎯 CHALLENGE 4: Build a Random Forest
+Model}\label{challenge-4-build-a-random-forest-model}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Your Task}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-warning-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Train a Random Forest to predict SNAP participation rates using the
+other socioeconomic indicators.
+
+\textbf{Your Model Should:} - Use \texttt{snap\_pct} as the target
+variable (left side of \texttt{\textasciitilde{}}) - Use all other
+variables as predictors (\texttt{.} on right side) - Have
+\texttt{ntree\ =\ 500} for stability - Be named \texttt{rf}
+
+\textbf{Hints \& Resources:} - Use the \texttt{randomForest()} function
+- Formula syntax: \texttt{target\ \textasciitilde{}\ .} predicts target
+using all other columns - Structure:
+\texttt{randomForest(formula,\ data\ =\ ...,\ ntree\ =\ 500)} - Print
+the model to see performance metrics!
+
+\textbf{Your Code:}
+
+\end{tcolorbox}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE}
+\CommentTok{\# Build a random forest model to predict snap\_pct}
+\CommentTok{\# Assign it to an object named \textquotesingle{}rf\textquotesingle{}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{🔍 Understanding Your Model Output}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Look at the printed output and answer:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Mean of squared residuals (MSR)}: How accurate are the
+  predictions on average?
+\item
+  \textbf{\% Var explained}: What percentage of SNAP variation does the
+  model explain?
+\item
+  \textbf{Interpretation}: Is this good? What might the model be
+  missing?
+\end{enumerate}
+
+Remember: MSR tells you the average squared prediction error. \% Var
+explained is like R² - higher is better!
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{🔬 Part 4: Explainable AI with
+SHAP}\label{part-4-explainable-ai-with-shap}
+
+SHAP (SHapley Additive exPlanations) values explain \emph{why} the model
+makes specific predictions. They break down each prediction into
+individual contributions from each feature.
+
+\subsubsection{Understanding SHAP}\label{understanding-shap}
+
+Before we calculate, let's understand what we're doing:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Unify the model}: Convert the Random Forest into a format that
+  SHAP can work with
+\item
+  \textbf{Calculate SHAP values}: Compute explanations for a subset of
+  observations (computing for all can be slow)
+\item
+  \textbf{Interpret}: Use the results to explain individual predictions
+  and global patterns
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{🎯 CHALLENGE 8: Prepare SHAP
+Calculations}\label{challenge-8-prepare-shap-calculations}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Your Task}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-warning-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Prepare the model for SHAP analysis by:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Unifying} your Random Forest model using \texttt{unify()}
+\item
+  \textbf{Calculating SHAP values} for the first 200 observations using
+  \texttt{treeshap()}
+\end{enumerate}
+
+\textbf{Hints \& Resources:}
+
+\begin{itemize}
+\tightlist
+\item
+  Step 1: Use \texttt{unify(your\_model,\ your\_data)} to convert the RF
+
+  \begin{itemize}
+  \tightlist
+  \item
+    First argument: your Random Forest object (named \texttt{rf})
+  \item
+    Second argument: your ML dataset (named \texttt{hi\_acs\_data\_ml})
+  \item
+    Assign result to \texttt{unified}
+  \end{itemize}
+\item
+  Step 2: Use
+  \texttt{treeshap(unified\_object,\ data\_subset,\ verbose\ =\ 0)}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    First argument: your unified model
+  \item
+    Second argument: subset of data - use
+    \texttt{hi\_acs\_data\_ml{[}1:200,\ {]}} to get first 200 rows
+  \item
+    Third argument: \texttt{verbose\ =\ 0} suppresses progress messages
+  \item
+    Assign result to \texttt{treeshap1}
+  \end{itemize}
+\end{itemize}
+
+\textbf{Your Code:}
+
+\end{tcolorbox}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE}
+\CommentTok{\# Step 1: Unify your Random Forest model}
+\CommentTok{\# unified \textless{}{-} unify(???, ???)}
+
+\CommentTok{\# Step 2: Calculate SHAP values for first 200 observations}
+\CommentTok{\# treeshap1 \textless{}{-} treeshap(???, ???, verbose = 0)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{💭 Why Only 200 Observations?}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Computing SHAP values is computationally expensive - it can take a long
+time for large datasets. For this assignment, we're calculating for a
+representative sample of 200 census tracts, which is enough to: -
+Understand which features matter globally - Examine feature dependence
+patterns - Look at individual case examples
+
+In production, you might calculate for all observations or use
+approximation methods like TreeSHAP (which is what we're using!).
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{⚠️ Patience Required!}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+The SHAP calculation might take 30 seconds to a few minutes depending on
+your computer. The \texttt{verbose\ =\ 0} parameter keeps it quiet while
+it works. You'll know it's done when the next code chunk starts
+executing!
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{📊 CHALLENGE 5: Feature Importance
+Plot}\label{challenge-5-feature-importance-plot}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Your Task}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-warning-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Create a feature importance plot showing the top 5 most important
+variables for predicting SNAP participation.
+
+\textbf{Hints \& Resources:} - Use
+\texttt{plot\_feature\_importance(treeshap1,\ max\_vars\ =\ 5)} - This
+uses the SHAP values we just calculated - The plot shows which features
+have the biggest impact on predictions - Longer bars = more important
+
+\textbf{Your Code:}
+
+\end{tcolorbox}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE}
+\CommentTok{\# Plot feature importance (top 5 most important features)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{💭 Interpretation}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Based on your feature importance plot:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  What are the TOP 2 most important predictors of SNAP participation?
+\item
+  Why do you think these variables matter?
+\item
+  Are there any surprising results?
+\item
+  What does this tell you about food security in Hawaiʻi?
+\end{enumerate}
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{📈 CHALLENGE 6: Feature Dependence
+Plots}\label{challenge-6-feature-dependence-plots}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Your Task}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-warning-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Create feature dependence plots for the \textbf{top 5 most important
+features} you identified in Challenge 5.
+
+\textbf{What to Do:} 1. Look at your feature importance plot 2. Identify
+the 5 most important variables 3. Create a dependence plot for each one
+4. Use: \texttt{plot\_feature\_dependence(treeshap1,\ "variable\_name")}
+
+\textbf{Example:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot\_feature\_dependence}\NormalTok{(treeshap1, }\StringTok{"poverty\_rate\_pct"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Hints \& Resources:} - The x-axis shows the actual variable
+values - The y-axis shows SHAP values (how much it pushes predictions
+up/down) - Red dots = push toward higher SNAP \% - Blue dots = push
+toward lower SNAP \% - Look for patterns: linear? non-linear? threshold
+effects?
+
+\textbf{Your Code (plot all 5):}
+
+\end{tcolorbox}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE {-} Feature Dependence Plot \#1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE {-} Feature Dependence Plot \#2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE {-} Feature Dependence Plot \#3}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE {-} Feature Dependence Plot \#4}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE {-} Feature Dependence Plot \#5}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{📊 Dependence Analysis Questions}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+For each plot, write 1-2 sentences about:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Direction}: Does higher variable value → higher or lower SNAP
+  participation?
+\item
+  \textbf{Strength}: Is the relationship strong, moderate, or weak?
+\item
+  \textbf{Pattern}: Is it linear, or are there non-linear patterns?
+\item
+  \textbf{Outliers}: Are there interesting outlier tracts?
+\end{enumerate}
+
+Example answer: \textgreater{} ``Poverty rate shows a strong positive
+relationship with SNAP participation. As poverty increases, SHAP values
+increase substantially, pushing predictions toward higher SNAP
+participation. The relationship appears roughly linear.''
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{👁️ CHALLENGE 7: Individual Tract
+Contribution}\label{challenge-7-individual-tract-contribution}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Your Task}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-warning-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Examine what drives predictions for \textbf{Census Tract 304.04 on Maui,
+Hawaiʻi}.
+
+\textbf{Hints \& Resources:} - This tract is observation \#154 in our
+data (hint: \texttt{obs\ =\ 154}) - Use:
+\texttt{plot\_contribution(treeshap1,\ obs\ =\ 154)} - \textbf{Red bars}
+= pushing toward higher SNAP \% - \textbf{Blue bars} = pushing toward
+lower SNAP \% - \textbf{Bar length} = strength of effect
+
+\textbf{Your Code:}
+
+\end{tcolorbox}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# YOUR CODE HERE}
+\CommentTok{\# Plot contribution effects for Census Tract 304.04, Maui}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{🔍 Case Study Analysis}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Answer these questions about Maui Census Tract 304.04:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Baseline}: What's the model's baseline prediction?
+\item
+  \textbf{Pushers}: Which 2-3 variables push predictions toward HIGHER
+  SNAP\%?
+\item
+  \textbf{Pullers}: Which 2-3 variables push predictions toward LOWER
+  SNAP\%?
+\item
+  \textbf{Net Effect}: Is the final prediction above or below the
+  baseline?
+\item
+  \textbf{Story}: Write 2-3 sentences telling the ``story'' of this
+  tract's SNAP participation
+\end{enumerate}
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{🎓 Reflection \& Analysis}\label{reflection-analysis}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Final Reflection Questions}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-important-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Answer these questions in a separate document or as comments in your
+code:
+
+\subsubsection{Understanding the
+Analysis}\label{understanding-the-analysis}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Model Performance}: How well does your Random Forest predict
+  SNAP participation? What might explain the remaining unexplained
+  variation?
+\item
+  \textbf{Key Drivers}: Based on feature importance and dependence
+  plots, which 2-3 factors are most strongly associated with SNAP
+  participation in Hawaiʻi?
+\item
+  \textbf{Equity Implications}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    What does the geographic distribution of SNAP participation tell you
+    about food security disparities?
+  \item
+    Are certain communities more vulnerable?
+  \end{itemize}
+\item
+  \textbf{Limitations}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    What important variables might be missing from this analysis?
+  \item
+    What are the limitations of predicting SNAP participation?
+    (Remember: correlation ≠ causation)
+  \end{itemize}
+\item
+  \textbf{Policy Recommendations}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Based on your findings, what 2-3 policy interventions might help
+    address food insecurity?
+  \item
+    Who should be targeted? Where should resources be focused?
+  \end{itemize}
+\end{enumerate}
+
+\subsubsection{Technical Reflection}\label{technical-reflection}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{5}
+\item
+  \textbf{Machine Learning Interpretation}: How did SHAP values help you
+  understand the Random Forest model compared to just looking at
+  variable importance?
+\item
+  \textbf{Next Steps}: If you were to continue this analysis, what would
+  you do next?
+\end{enumerate}
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{⭐ BONUS: Extension
+Challenges}\label{bonus-extension-challenges}
+
+\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{For Extra Credit}, titlerule=0mm, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, colback=white, left=2mm, toprule=.15mm, opacitybacktitle=0.6, toptitle=1mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, arc=.35mm, bottomrule=.15mm, breakable, leftrule=.75mm, opacityback=0, rightrule=.15mm]
+
+Try one or more of these extensions:
+
+\subsubsection{Extension 1: Regional
+Analysis}\label{extension-1-regional-analysis}
+
+\begin{itemize}
+\tightlist
+\item
+  Split Hawaiʻi by island (using \texttt{GEOID} or geographic location)
+\item
+  Build separate Random Forest models for each island
+\item
+  Compare which factors matter most on each island
+\end{itemize}
+
+\subsubsection{Extension 2: Relationship
+Exploration}\label{extension-2-relationship-exploration}
+
+\begin{itemize}
+\tightlist
+\item
+  Create scatter plots showing relationships between top predictors and
+  SNAP\%
+\item
+  Calculate correlation coefficients
+\item
+  Which relationships are strongest?
+\end{itemize}
+
+\subsubsection{Extension 3: Model
+Comparison}\label{extension-3-model-comparison}
+
+\begin{itemize}
+\tightlist
+\item
+  Build a \textbf{second} Random Forest with different parameters (e.g.,
+  \texttt{mtry}, \texttt{nodesize})
+\item
+  Compare performance to your original model
+\item
+  Which performs better?
+\end{itemize}
+
+\subsubsection{Extension 4: Prediction
+Intervals}\label{extension-4-prediction-intervals}
+
+\begin{itemize}
+\tightlist
+\item
+  For a new hypothetical census tract, use your model to predict SNAP
+  participation
+\item
+  What would be needed to create prediction intervals?
+\item
+  How confident would you be in that prediction?
+\end{itemize}
+
+\subsubsection{Extension 5: Data
+Visualization}\label{extension-5-data-visualization}
+
+\begin{itemize}
+\tightlist
+\item
+  Create a multi-panel visualization combining:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    The map of SNAP participation
+  \item
+    Distribution histogram
+  \item
+    Top feature importance plot
+  \item
+    Tell a complete visual story
+  \end{itemize}
+\end{itemize}
+
+\end{tcolorbox}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{📝 Submission Checklist}\label{submission-checklist}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  All 7 challenges completed with code
+\item[$\square$]
+  Written explanations for each challenge
+\item[$\square$]
+  Reflection questions answered thoroughly
+\item[$\square$]
+  Code is commented and readable
+\item[$\square$]
+  Plots are properly labeled with titles/legends
+\item[$\square$]
+  At least one bonus challenge attempted (optional)
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{📚 Resources \& References}\label{resources-references}
+
+\begin{itemize}
+\tightlist
+\item
+  \href{https://walker-data.com/tidycensus/}{tidycensus Documentation}
+\item
+  \href{https://data.census.gov/}{Census Bureau Data Catalog}
+\item
+  \href{https://shap.readthedocs.io/}{SHAP Documentation}
+\item
+  \href{https://cran.r-project.org/web/packages/randomForest/randomForest.pdf}{Random
+  Forests in R}
+\item
+  \href{https://r-spatial.github.io/mapview/}{mapview Package}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\emph{Good luck! Remember: focus on understanding WHAT you're doing and
+WHY, not just running code. Ask questions, explore the data, and enjoy
+the detective work of data science! 🔍📊}
+
+
+
+
+\end{document}

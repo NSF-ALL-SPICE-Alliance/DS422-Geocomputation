@@ -1,0 +1,303 @@
+---
+title: "🌿 NDVI over Oʻahu with Sentinel-2 (R Tutorial)"
+subtitle: "From Copernicus Browser to NDVI map in minutes"
+author: "Your Name"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-title: "On this page"
+    toc-depth: 3
+execute:
+  echo: true
+  message: false
+  warning: false
+editor: visual
+---
+
+```{r}
+library(here)
+library(terra)
+library(sf)
+```
+
+## NDVI (Normalized Difference Vegetation Index)
+
+NDVI is a simple, per-pixel indicator of “greenness” (photosynthetic activity).
+
+### What it measures
+
+Plants reflect more **near-infrared (NIR)** light and absorb **red** light. NDVI combines those two bands to highlight living vegetation.
+
+### Formula
+
+$$
+\mathrm{NDVI} \;=\; \frac{\text{NIR} - \text{Red}}{\text{NIR} + \text{Red}}
+$$
+
+```{=html}
+<!-- Plain-text fallback (if math is disabled):
+NDVI = (NIR - Red) / (NIR + Red)
+-->
+```
+
+### Typical value ranges
+
+-   **0.6–0.9**: dense, healthy vegetation\
+-   **0.2–0.5**: sparse/brown vegetation, shrubs/grass\
+-   **0–0.2**: bare soil / urban\
+-   **\< 0**: water, clouds, shadows, snow
+
+### What data do we need to calculate NDVI
+
+-   We can use the [Copernicus Open Access Hub](https://browser.dataspace.copernicus.eu/) to grab data form the satellite Sentinel 2
+
+-   We specifically need Band 8 data for near-infared and Band 4 data for red
+
+```{r}
+# Paths to your .jp2 files
+red_path <- here("data/band_data/T04QFJ_20250906T210919_B04_10m.jp2")
+nir_path <- here("data/band_data/T04QFJ_20250906T210919_B08_10m.jp2")
+```
+
+### These .jp2 files contain raster data
+
+-   Raster data is a way to represent geography as a **grid of cells (pixels)**. Each cell has a single value (e.g., elevation, temperature, NDVI) and the whole grid is georeferenced so every cell aligns to a real-world location
+
+-   The `terra` package helps us read raster data into R
+
+```{r}
+# Read bands directly
+red <- rast(red_path)
+nir <- rast(nir_path)
+```
+
+### Calculating NDVI
+
+$$
+\mathrm{NDVI} \;=\; \frac{\text{NIR} - \text{Red}}{\text{NIR} + \text{Red}}
+$$
+
+```{r}
+ndvi <- (nir - red) / (nir + red)
+```
+
+### Plotting NDVI
+
+```{r}
+plot(ndvi, main = "NDVI")
+```
+
+### Trimming the plot:
+
+```{r}
+# Create extent in lat/lon
+oahu_ext_latlon <- ext(-158.3, -157.6, 21.2, 21.7)
+
+# Create a temporary raster with this extent in WGS84
+temp_raster <- rast(oahu_ext_latlon, crs = "EPSG:4326")
+
+# Project to match your NDVI's CRS
+temp_raster_utm <- project(temp_raster, crs(ndvi))
+
+# Get the extent in UTM coordinates
+oahu_bbox <- ext(temp_raster_utm)
+
+# Crop your NDVI
+ndvi_oahu <- crop(ndvi, oahu_bbox)
+plot(ndvi_oahu, main = "NDVI - Oahu Area")
+```
+
+```{r}
+library(ggplot2)
+library(tidyterra)
+
+ggplot() +
+  geom_spatraster(data = ndvi_oahu) +
+  scale_fill_gradient2(low = "#8B4513", mid = "#FFD700", high = "#006400",
+                       midpoint = 0.4,
+                       name = "NDVI",
+                       na.value = "transparent") +
+  labs(title = "Normalized Difference Vegetation Index",
+       subtitle = "Oʻahu, Hawaiʻi",
+       caption = "Data: Sentinel-2, September 2025") +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14),
+        plot.subtitle = element_text(hjust = 0.5, size = 12),
+        legend.position = "bottom")
+```
+
+```{r}
+library(mapview)
+
+# Reduce resolution significantly (factor of 8-10 should work)
+ndvi_small <- aggregate(ndvi_oahu, fact = 8, fun = mean)
+
+# Check the new size
+ncell(ndvi_small)  # Should be much smaller now
+
+# Now map it
+mapview(ndvi_small, 
+        col.regions = c("#8B4513", "#FFD700", "#9ACD32", "#228B22", "#006400"),
+        layer.name = "NDVI",
+        alpha = 0.7)
+```
+
+```{r}
+library(mapview)
+
+# Reduce resolution
+ndvi_small <- aggregate(ndvi_oahu, fact = 8, fun = mean)
+
+# Mask out negative values (ocean/water)
+ndvi_veg_only <- ndvi_small
+ndvi_veg_only[ndvi_veg_only < 0] <- NA
+
+# Create a focused color palette for 0-0.6 range
+mapview(ndvi_veg_only,
+        at = seq(0, 0.6, 0.1),  # Specific breaks from 0 to 0.6
+        col.regions = c("#D2691E", "#DEB887", "#F0E68C", "#ADFF2F", "#32CD32", "#228B22", "#006400"),
+        layer.name = "NDVI",
+        alpha = 0.8,
+        na.color = "#E6F3FF")  # Light blue for ocean/NA values
+```
+
+```{r}
+# Create custom breaks and colors
+breaks <- c(-1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1)
+colors <- c("#4A90E2",      # Ocean (blue)
+           "#CD853F",       # Bare soil/urban (tan)
+           "#DEB887",       # Very sparse (light tan)
+           "#F0E68C",       # Sparse (light yellow)
+           "#ADFF2F",       # Moderate (yellow-green)
+           "#32CD32",       # Good vegetation (lime green)
+           "#228B22",       # Dense vegetation (forest green)
+           "#006400")       # Very dense (dark green)
+
+mapview(ndvi_small,
+        at = breaks,
+        col.regions = colors,
+        layer.name = "NDVI",
+        alpha = 0.8)
+```
+
+```{r}
+library(viridis)
+
+# Custom function to handle ocean vs land
+create_ndvi_palette <- function(n = 100) {
+  ocean_color <- "#2E86AB"  # Nice blue for ocean
+  land_colors <- viridis(n, option = "D")  # Green-focused palette for land
+  c(ocean_color, land_colors)
+}
+
+mapview(ndvi_small,
+        at = c(-1, 0, seq(0.05, 0.6, length.out = 12)),
+        col.regions = create_ndvi_palette(12),
+        layer.name = "NDVI",
+        alpha = 0.8)
+```
+
+```{r}
+library(mapview)
+
+# Reduce resolution
+ndvi_small <- aggregate(ndvi_oahu, fact = 8, fun = mean)
+
+# Define breaks based on your categories
+breaks <- c(-1, 0, 0.2, 0.5, 0.6, 1)
+
+# Colors matching the categories
+colors <- c("#4A90E2",      # < 0: Water (blue)
+           "#8B4513",       # 0-0.2: Bare soil/urban (brown)
+           "#CD853F",       # 0.2-0.5: Sparse/brown vegetation (tan/light brown)
+           "#228B22",       # 0.5-0.6: Transition to dense (forest green)
+           "#006400")       # 0.6+: Dense, healthy vegetation (dark green)
+
+mapview(ndvi_small,
+        at = breaks,
+        col.regions = colors,
+        layer.name = "NDVI",
+        alpha = 0.8)
+```
+
+```{r}
+# Use the higher resolution version for more accurate statistics
+ndvi_values <- values(ndvi_oahu, na.rm = TRUE)
+
+# Define the same categories
+categories <- cut(ndvi_values, 
+                  breaks = c(-Inf, 0, 0.2, 0.5, 0.6, Inf),
+                  labels = c("Water/Clouds", "Bare/Urban", "Sparse Vegetation", 
+                            "Moderate Vegetation", "Dense Vegetation"),
+                  include.lowest = TRUE)
+
+# Calculate counts and proportions
+category_counts <- table(categories)
+category_props <- prop.table(category_counts) * 100
+
+# Create a nice summary
+results <- data.frame(
+  Category = names(category_counts),
+  Pixel_Count = as.numeric(category_counts),
+  Percentage = round(as.numeric(category_props), 2)
+)
+
+print(results)
+```
+
+```{r}
+# For land-only analysis (excluding water/negative values)
+land_values <- ndvi_values[ndvi_values >= 0]
+
+land_categories <- cut(land_values,
+                      breaks = c(0, 0.2, 0.5, 0.6, 1),
+                      labels = c("Bare/Urban", "Sparse Vegetation", 
+                                "Moderate Vegetation", "Dense Vegetation"),
+                      include.lowest = TRUE)
+
+land_counts <- table(land_categories)
+land_props <- prop.table(land_counts) * 100
+
+land_results <- data.frame(
+  Category = names(land_counts),
+  Pixel_Count = as.numeric(land_counts),
+  Percentage_of_Land = round(as.numeric(land_props), 2)
+)
+
+print("Land cover analysis (excluding water):")
+print(land_results)
+```
+
+```{r}
+library(ggplot2)
+
+# Create a bar chart
+ggplot(results, aes(x = Category, y = Percentage, fill = Category)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("Water/Clouds" = "#4A90E2",
+                              "Bare/Urban" = "#8B4513",
+                              "Sparse Vegetation" = "#CD853F",
+                              "Moderate Vegetation" = "#BDB76B",
+                              "Dense Vegetation" = "#006400")) +
+  labs(title = "Land Cover Distribution - Oʻahu",
+       subtitle = "Based on NDVI Categories",
+       x = "Category", y = "Percentage of Total Area") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none") +
+  geom_text(aes(label = paste0(Percentage, "%")), 
+            vjust = -0.3, size = 3)
+```
+
+```{r}
+# Quick summary stats
+cat("NDVI Summary for Oʻahu:\n")
+cat("Total pixels analyzed:", length(ndvi_values), "\n")
+cat("Land pixels (NDVI ≥ 0):", length(land_values), "\n")
+cat("Water/ocean pixels:", sum(ndvi_values < 0), "\n\n")
+
+cat("Mean NDVI (land only):", round(mean(land_values), 3), "\n")
+cat("Median NDVI (land only):", round(median(land_values), 3), "\n")
+cat("Max vegetation index:", round(max(ndvi_values), 3), "\n")
+```

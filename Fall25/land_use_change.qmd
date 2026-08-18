@@ -1,0 +1,23 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+## 
+
+### Libraries
+
+```{r}
+library(sf)
+library(here)
+library(tidyverse)
+```
+
+```{r}
+land_use <- st_read(here("data/Land_Use_Land_Cover_(LULC).geojson"))
+```
+
+```{r}
+table(land_use$landcover)
+```

@@ -1,0 +1,8 @@
+- source: getting_started.qmd
+  quarto-pub:
+    - id: d5d43461-3639-4645-a63b-420734bd51c2
+      url: https://connorflynn.quarto.pub/getting-started-with-r-rstudio-and-github-for-ds422
+- source: ml_assignment.qmd
+  quarto-pub:
+    - id: 7f712a14-2f0d-4ea6-a075-274b5af95204
+      url: https://connorflynn.quarto.pub/hawaii-snap-analysis-interactive-homework
